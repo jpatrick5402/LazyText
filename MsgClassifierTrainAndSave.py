@@ -5,17 +5,17 @@ from sklearn.svm import SVC
 from sklearn.model_selection import StratifiedKFold, cross_val_score
 import joblib
 
-# --- Data ---
+# Get Data from CSV file
 # Labels: 0 = No Response, 1 = AI Response, 2 = Human Response
 df = pd.read_csv('training_data.csv', quotechar='"', escapechar='\\')
 texts = df['text'].tolist()
 labels = df['label'].tolist()
 
-# --- Embed ---
+# Embed
 embedder = SentenceTransformer('all-MiniLM-L6-v2')
 X = embedder.encode(texts, show_progress_bar=False)
 
-# --- Cross-validate ---
+# Cross-validate
 model = SVC(kernel='rbf', probability=True, C=1.0)
 cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 scores_f1 = cross_val_score(model, X, labels, cv=cv, scoring='f1_weighted')
@@ -23,10 +23,13 @@ scores_acc = cross_val_score(model, X, labels, cv=cv, scoring='accuracy')
 print(f"F1:       {scores_f1.mean():.2f} ± {scores_f1.std():.2f}")
 print(f"Accuracy: {scores_acc.mean():.2f} ± {scores_acc.std():.2f}")
 
-# --- Train on all data ---
+# Train on all data
 model.fit(X, labels)
 
-# --- Classify ---
+# Save to file for later use
+joblib.dump(model, 'message_classifier.pkl')
+
+# Classify function for testing
 def classify_message(text):
     vec = embedder.encode([text])
     pred = model.predict(vec)[0]
@@ -34,10 +37,7 @@ def classify_message(text):
     labels_map = {0: "No Response Needed", 1: "AI Response", 2: "Human Response"}
     return pred, f"{labels_map[pred]} ({prob:.0%} confidence)"
 
-# --- Save ---
-joblib.dump(model, 'message_classifier.pkl')
-
-# --- Test ---
+# Test
 test_messages = [
     "Hey!",
     "I love you son.",
@@ -57,7 +57,7 @@ test_messages = [
     "Hey son, do you know why Richard isn't texting me?"
 ]
 
-print("\n--- Test Results ---")
+print("\n--- Test Results")
 for msg in test_messages:
     _, result = classify_message(msg)
     print(f"'{msg}' → {result}")

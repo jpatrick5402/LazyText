@@ -12,10 +12,7 @@ app = FastAPI()
 svm_model = joblib.load("message_classifier.pkl")
 embedder = SentenceTransformer("all-MiniLM-L6-v2")
 
-class Input(BaseModel):
-    text: str
-
-def get_response(text: str):
+def get_response(text: str) -> str:
     response = requests.post(
         "https://openrouter.ai/api/v1/chat/completions",
         headers={
@@ -52,6 +49,9 @@ def predict_text(text: str) -> dict:
         "probabilities": prob.tolist(),
         "response": response
     }
+
+class Input(BaseModel):
+    text: str
 
 @app.post("/predict")
 async def predict_endpoint(payload: Input):
