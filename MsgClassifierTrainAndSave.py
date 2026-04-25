@@ -1,3 +1,6 @@
+# MsgClassifierTrainAndSave.py
+# This program will train and generate a model that classifies 
+# text as "No response needed", "AI response needed", or "Human response needed"
 import numpy as np
 import pandas as pd
 from sentence_transformers import SentenceTransformer
