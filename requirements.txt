@@ -3,4 +3,4 @@ dotenv
 sentence_transformers
 fastapi
 uvicorn
-ollama
+google-genai
