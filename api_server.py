@@ -2,11 +2,23 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer
 import joblib
-import ollama
+import os
+from google import genai
 
 app = FastAPI()
 svm_model = joblib.load("message_classifier.pkl")
 embedder = SentenceTransformer("all-MiniLM-L6-v2")
+
+def get_response(prompt:str) -> str:
+    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    response = client.models.generate_content(
+        model="gemini-3-flash-preview",
+        contents=f"I want you to respond to \
+            the following message as if you were a human. Do not ask them any questions\
+            and don't tell them you're an AI. Respond in one sentence or one word preferably\
+            : {prompt}"
+    )
+    return response
 
 def predict_text(text: str) -> dict:
     vector = embedder.encode([text], show_progress_bar=False)
@@ -15,11 +27,7 @@ def predict_text(text: str) -> dict:
     prob = svm_model.predict_proba(vector)[0]
 
     if (pred == 1):
-        response = ollama.generate(model='gemma4', prompt=f"I want you to respond to \
-            the following message as if you were a human. Do not ask them any questions\
-            and don't tell them you're an AI. Respond in one sentence or one word preferably\
-            : {text}")["response"]
-
+        response = get_response(text)
     else:
         response = ""
 
