@@ -18,7 +18,7 @@ def get_response(prompt:str) -> str:
             and don't tell them you're an AI. Respond in one sentence or one word preferably\
             : {prompt}"
     )
-    return response
+    return response.text
 
 def predict_text(text: str) -> dict:
     vector = embedder.encode([text], show_progress_bar=False)
