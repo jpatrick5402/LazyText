@@ -17,9 +17,9 @@ def get_response(prompt:str) -> str:
             the following message as if you were a human. Do not ask them any questions\
             and don't tell them you're an AI. Respond in one sentence or one word preferably\
             : {prompt}",
-        config=types.GenerateContentConfig(
-            http_options=types.HttpOptions(
-                retry_options=types.HttpRetryOptions(
+        config = genai.types.GenerateContentConfig(
+            http_options = genai.types.HttpOptions(
+                retry_options = genai.types.HttpRetryOptions(
                     attempts=5,
                     initial_delay=1.0,
                     http_status_codes=[408, 429, 500, 502, 503, 504],
