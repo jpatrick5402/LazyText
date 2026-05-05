@@ -11,14 +11,12 @@ embedder = SentenceTransformer("all-MiniLM-L6-v2")
 
 def get_response(prompt:str) -> str:
     client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-    system_prompt = (
-        "Respond as if you were a human. Do not ask questions or reveal you're an AI. "
-        "Use one sentence or one word preferably."
-    )
     response = client.models.generate_content(
         model = "gemini-3-flash-preview",
-        system_instructions = system_prompt,
-        contents = prompt,
+        contents=f"I want you to respond to \
+            the following message as if you were a human. Do not ask them any questions\
+            and don't tell them you're an AI. Respond in one sentence or one word preferably\
+            : {prompt}",
         config = genai.types.GenerateContentConfig(
             http_options = genai.types.HttpOptions(
                 retry_options = genai.types.HttpRetryOptions(
