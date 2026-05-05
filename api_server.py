@@ -32,6 +32,7 @@ def predict_text(text: str) -> dict:
         response = ""
 
     return {
+        "description": "predictions: 0 = No response needed, 1 = AI response needed, 2 = Human response needed",
         "prediction": int(pred) if hasattr(pred, "item") else pred,
         "probabilities": prob.tolist(),
         "response": response
