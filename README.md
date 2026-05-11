@@ -2,7 +2,7 @@
 
 Using AI to not have to respond to text messages
 
-## Installation
+## Server Installation
 ```
 git clone https://github.com/jpatrick5402/LazyText
 cd LazyText/
